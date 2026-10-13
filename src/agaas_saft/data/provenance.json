@@ -1,0 +1,41 @@
+{
+  "repository": "https://github.com/Skatteetaten/saf-t",
+  "commit": "05179521e435d82feb0b2d6c89a92a32a4f2d02f",
+  "files": [
+    {
+      "path": "UPSTREAM-README.md",
+      "upstream_path": "README.md",
+      "sha256": "dedc27906ed67ad210a2e0bbaf59d67f9ca5484604506e75a932f2d82100413d"
+    },
+    {
+      "path": "src/agaas_saft/data/financial-1.30.xsd",
+      "upstream_path": "SAF-T_Financial_1.3/Norwegian_SAF-T_Financial_Schema_v_1.30.xsd",
+      "sha256": "2ddd358a13af0b2e19078650c8f00cc5d7a392926f6940818c1893cc9769a357"
+    },
+    {
+      "path": "src/agaas_saft/data/financial-1.40.xsd",
+      "upstream_path": "SAF-T_Financial_1.4/Norwegian_SAF-T_Financial_Schema_v_1.40.xsd",
+      "sha256": "0e2f33c825612ea45f991b4a04039c63eae070df7da10fecab18fd043d4f2128"
+    },
+    {
+      "path": "src/agaas_saft/data/grouping-2025-2026.csv",
+      "upstream_path": "Grouping Category Code 2025-2026/CSV/naeringsspesifikasjon.csv",
+      "sha256": "88277d2cffae1abd74b31b8eea057d595c7621ff6de54633fa942104ce28bb7f"
+    },
+    {
+      "path": "src/agaas_saft/data/tax-codes.csv",
+      "upstream_path": "Standard Tax Codes/CSV/Standard_Tax_Codes.csv",
+      "sha256": "b58bf18d72ed8381c849d56d55af82a9982731c2c9343fa2cc95f56b1a5e8b53"
+    },
+    {
+      "path": "tests/fixtures/upstream-1.30.xml",
+      "upstream_path": "SAF-T_Financial_1.3/Example Files/generated_auditfile_formatted_v_1.30.xml",
+      "sha256": "723a7ae09fffeae5a75d9101e40ebd9cbd7ce1e019afc8936c4ffbdf945ff9fd"
+    },
+    {
+      "path": "tests/fixtures/upstream-1.40.xml",
+      "upstream_path": "SAF-T_Financial_1.4/Example Files/generated_auditfile_formatted_v_1.40.xml",
+      "sha256": "cd4ebbc60e61eed4dd035d01c93796e685711c2d27e97aca5a37e7c454116fc7"
+    }
+  ]
+}

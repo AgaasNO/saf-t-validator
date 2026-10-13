@@ -1,0 +1,5 @@
+# Preserve upstream bytes so provenance checks work on every platform.
+src/agaas_saft/data/*.xsd -text
+src/agaas_saft/data/*.csv -text
+tests/fixtures/*.xml -text
+UPSTREAM-README.md -text -whitespace

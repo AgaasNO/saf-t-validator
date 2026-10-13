@@ -1,0 +1,56 @@
+name: validator
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: prefix-dev/setup-pixi@1b2de7f3351f171c8b4dfeb558c639cb58ed4ec0 # v0.9.5
+        with:
+          pixi-version: v0.81.0
+          manifest-path: pyproject.toml
+          locked: true
+      - run: pixi run --locked check
+      - run: pixi run --locked build
+      - run: pixi run --locked python scripts/check_wheel.py
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: test
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: prefix-dev/setup-pixi@1b2de7f3351f171c8b4dfeb558c639cb58ed4ec0 # v0.9.5
+        with:
+          pixi-version: v0.81.0
+          manifest-path: pyproject.toml
+          locked: true
+      - run: pixi run --locked build
+      - run: pixi run --locked python scripts/check_wheel.py
+      - name: Publish the tested wheel
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          pixi run --locked python -c 'import os, tomllib; from agaas_saft import __version__; p=tomllib.load(open("pyproject.toml", "rb")); assert os.environ["RELEASE_TAG"] == "v" + __version__ == "v" + p["project"]["version"]'
+          sha256sum dist/*.whl > dist/SHA256SUMS
+          gh release create "$RELEASE_TAG" dist/*.whl dist/SHA256SUMS --verify-tag --title "$RELEASE_TAG" --notes-file docs/release-notes.md

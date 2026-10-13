@@ -1,0 +1,53 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agaas-saft"
+version = "0.1.0"
+description = "Offline SAF-T Financial validation for accounting tests"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["lxml>=6,<7"]
+
+[project.scripts]
+agaas-saft = "agaas_saft.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agaas_saft"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"NOTICE.md" = "agaas_saft/NOTICE.md"
+"UPSTREAM-README.md" = "agaas_saft/UPSTREAM-README.md"
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
+
+[tool.pixi.dependencies]
+python = "3.13.*"
+lxml = "6.*"
+pytest = "8.*"
+python-build = "1.*"
+hatchling = "==1.27.0"
+ruff = "0.12.*"
+
+[tool.pixi.pypi-dependencies]
+agaas-saft = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+test = "pytest -q"
+lint = "ruff check src tests scripts"
+format-check = "ruff format --check src tests scripts"
+build = "python -m build --no-isolation --wheel"
+check = { depends-on = ["lint", "format-check", "test"] }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
