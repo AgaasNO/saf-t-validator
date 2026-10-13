@@ -91,9 +91,23 @@ kontovalg eller standardens øvrige krav. Full NS 4102-kontroll i Agaas står ve
 
 ## Installasjon i et annet repo og CI
 
-Installer Pixi og legg til følgende `pixi.toml`. Kjør `pixi install` én gang og
-commit både manifest og `pixi.lock`. Låsefilen binder wheel-filen og øvrige
-avhengigheter til kontrollsummer. CI bruker alltid `pixi install --locked`.
+Hent wheel-filen og kontroller SHA-256 før Pixi installerer den. Både URL og
+forventet sum skal ligge i konsumentens repo; bruk utgivelsens `SHA256SUMS` når
+en ny versjon vurderes. Kontroller også en eksisterende fil før den brukes igjen.
+Et eksempel for Linux, som stopper ved avvik:
+
+```sh
+set -eu
+mkdir -p .tools/saft
+curl --fail --location --output .tools/saft/agaas_saft-0.1.0-py3-none-any.whl \
+  https://github.com/AgaasNO/saf-t-validator/releases/download/v0.1.0/agaas_saft-0.1.0-py3-none-any.whl
+printf '%s  %s\n' c9a4b8f3fd0e2215afd97903e1106d9bad3c728525d02edd3e42b015cb0766a5 \
+  .tools/saft/agaas_saft-0.1.0-py3-none-any.whl | sha256sum --check
+```
+
+Installer Pixi og legg til følgende `pixi.toml`. Kjør `pixi install` én gang etter
+verifisert nedlasting, og commit manifest og `pixi.lock`. Den nedlastede filen skal
+ignoreres av Git. CI gjentar nedlasting og kontroll, og bruker `pixi install --locked`.
 
 ```toml
 [workspace]
@@ -105,7 +119,7 @@ python = "3.13.*"
 lxml = "6.*"
 
 [pypi-dependencies]
-agaas-saft = { url = "https://github.com/AgaasNO/saf-t-validator/releases/download/v0.1.0/agaas_saft-0.1.0-py3-none-any.whl" }
+agaas-saft = { path = ".tools/saft/agaas_saft-0.1.0-py3-none-any.whl" }
 ```
 
 Applikasjonens tester kaller `pixi run --locked agaas-saft validate - --schema-version 1.40`
@@ -126,5 +140,6 @@ assert report.checks["schema"] == "passed"
 ```
 
 Wheel-filen inneholder kode, to XSD-er, to kodelister og kildehenvisninger. Historikk,
-eksempelfiler og tester følger ikke med. Ved oppgradering endres utgivelses-URL
-og låsefil sammen i en gjennomgått endring. Ingen test laster ned «latest».
+eksempelfiler og tester følger ikke med. Ved oppgradering endres utgivelses-URL,
+SHA-256, lokal filsti og låsefil sammen i en gjennomgått endring.
+Ingen test laster ned «latest».
